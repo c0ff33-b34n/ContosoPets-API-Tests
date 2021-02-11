@@ -139,6 +139,36 @@ namespace ContosoPets.Tests
             Assert.IsType<NoContentResult>(actionResult.Result);
         }
 
+        [Fact]
+        public void Delete_ReturnsNotFound_ForInvalidId()
+        {
+            // Arrange
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            // Act
+            var result = productsController.Delete(7);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<IActionResult>>(result);
+            Assert.IsType<NotFoundResult>(actionResult.Result);
+        }
+
+        [Fact]
+        public void Delete_ReturnsNoContent_ForDeletingProductWithValidId()
+        {
+            // Arrange
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            // Act
+            var result = productsController.Delete(3);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<IActionResult>>(result);
+            Assert.IsType<NoContentResult>(actionResult.Result);
+        }
+
         private ContosoPetsContext GetDatabaseContext()
         {
             var options = new DbContextOptionsBuilder<ContosoPetsContext>()
