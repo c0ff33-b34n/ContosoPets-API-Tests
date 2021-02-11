@@ -72,6 +72,30 @@ namespace ContosoPets.Tests
             Assert.Equal(actionResult.Result.Value.Id, 3);
         }
 
+        [Fact]
+        public void Create_ReturnsNewlyCreatedProduct()
+        {
+            // Arrange
+            string productName = "5 metre lead";
+            decimal price = 4.99M;
+
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            Product newProduct = new(6, productName, price);
+
+            // Act
+            var result = productsController.Create(newProduct);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<IActionResult>>(result);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(actionResult.Result);
+            var returnValue = Assert.IsType<Product>(createdAtActionResult.Value);
+            Assert.Equal(6, returnValue.Id);
+            Assert.Equal(productName, returnValue.Name);
+            Assert.Equal(price, returnValue.Price);
+        }
+
         private ContosoPetsContext GetDatabaseContext()
         {
             var options = new DbContextOptionsBuilder<ContosoPetsContext>()
