@@ -96,6 +96,49 @@ namespace ContosoPets.Tests
             Assert.Equal(price, returnValue.Price);
         }
 
+        [Fact]
+        public void Update_ReturnsBadRequest_ForProductAndIdMismatch()
+        {
+            // Arrange
+            int i = 4;
+            string productName = $"Product{i}";
+            decimal price = 4.99M;
+
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            Product updatedProduct = new(i, productName, price);
+
+            // Act
+            var result = productsController.Update(3, updatedProduct);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<IActionResult>>(result);
+            Assert.IsType<BadRequestResult>(actionResult.Result);
+        }
+
+        [Fact]
+        public void Update_ReturnsNoContent_ForSuccessfulUpdate()
+        {
+            // Arrange
+            int i = 4;
+            decimal price = 7.99M;
+
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            var updatedProduct = productsController.GetById(i).Result.Value;
+
+            Product newUpdatedProduct = updatedProduct with {Price = price};
+
+            // Act
+            var result = productsController.Update(i, newUpdatedProduct);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<IActionResult>>(result);
+            Assert.IsType<NoContentResult>(actionResult.Result);
+        }
+
         private ContosoPetsContext GetDatabaseContext()
         {
             var options = new DbContextOptionsBuilder<ContosoPetsContext>()

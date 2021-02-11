@@ -51,8 +51,9 @@ namespace ContosoPets.Api.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(product).State = EntityState.Modified;
+            
+            var prod = _context.Products.First(p => p.Id == product.Id);
+            _context.Entry(prod).CurrentValues.SetValues(product);
             await _context.SaveChangesAsync();
 
             return NoContent();
