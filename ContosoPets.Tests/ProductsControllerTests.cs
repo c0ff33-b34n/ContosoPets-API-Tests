@@ -127,12 +127,12 @@ namespace ContosoPets.Tests
             var dbContext = GetDatabaseContext();
             var productsController = new ProductsController(dbContext);
 
-            var updatedProduct = productsController.GetById(i).Result.Value;
+            var product = productsController.GetById(i).Result.Value;
 
-            Product newUpdatedProduct = updatedProduct with {Price = price};
+            Product updatedProduct = product with {Price = price};
 
             // Act
-            var result = productsController.Update(i, newUpdatedProduct);
+            var result = productsController.Update(i, updatedProduct);
 
             // Assert
             var actionResult = Assert.IsType<Task<IActionResult>>(result);
