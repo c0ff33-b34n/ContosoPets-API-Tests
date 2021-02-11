@@ -41,6 +41,37 @@ namespace ContosoPets.Tests
             Assert.Equal(products.Value.Count(), 5);
         }
 
+        [Fact]
+        public void GetById_ReturnsNotFound_ForInvalidId()
+        {
+            // Arrange
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            // Act
+            var result = productsController.GetById(6);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<ActionResult<Product>>>(result);
+            Assert.IsType<NotFoundResult>(actionResult.Result.Result);
+        }
+
+        [Fact]
+        public void GetById_ReturnsProduct_ForValidId()
+        {
+            // Arrange
+            var dbContext = GetDatabaseContext();
+            var productsController = new ProductsController(dbContext);
+
+            // Act
+            var result = productsController.GetById(3);
+
+            // Assert
+            var actionResult = Assert.IsType<Task<ActionResult<Product>>>(result);
+            Assert.IsType<Product>(actionResult.Result.Value);
+            Assert.Equal(actionResult.Result.Value.Id, 3);
+        }
+
         private ContosoPetsContext GetDatabaseContext()
         {
             var options = new DbContextOptionsBuilder<ContosoPetsContext>()
